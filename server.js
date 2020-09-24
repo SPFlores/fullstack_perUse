@@ -9,4 +9,9 @@ app.use(express.json())
 
 require('./Routes')(app)
 
-app.listen(process.env.PORT || 3003)
+require('./config').sync()
+  .then(_ => {
+    app.listen(process.env.PORT || 3003)
+    console.log('server is working')
+  })
+  .catch(e => console.log(e))

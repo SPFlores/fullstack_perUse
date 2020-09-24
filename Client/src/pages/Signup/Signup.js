@@ -146,7 +146,7 @@ const SignupPage = _ => {
           {newUserState.failedAll ? <p style={{ color: '#ef6461' }}>Please enter your information!</p> : null}
           {newUserState.failedSignupName ? <p style={{ color: '#ef6461' }}>Please enter your name!</p> : null}
           <label htmlFor='name'>Name: </label>
-          <input type='text' id='name' name='name' ref={name} id='nameEntry' />
+          <input type='text' name='name' ref={name} id='nameEntry' />
         </div>
         <div>
           {newUserState.failedSignupUsername ? <p style={{ color: '#ef6461' }}>Please enter your username!</p> : null}

@@ -13,7 +13,7 @@ module.exports = app => {
       .catch(e => console.log(e))
   })
 
-  // must be logged in, will validate using localstorage isLoggedIn boolean OR token if some type of auth is implemented down the line
+  // must be logged in and be job poster, will validate using localstorage isLoggedIn boolean OR token if some type of auth is implemented down the line and some type of userType localStorage item
   app.post('/jobs', (req, res) => {
     Job.create(req.body)
       .then(_ => {

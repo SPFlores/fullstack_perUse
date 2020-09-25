@@ -23,6 +23,7 @@ module.exports = app => {
       .then(user => {
         if (user) {
           console.log('login success')
+          // will set localstorage boolean isLoggedIn OR will set token in localstorage once user auth is implemented down the line
           res.sendStatus(200)
         } else {
           console.log('login failed')

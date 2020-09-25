@@ -16,5 +16,7 @@ Job.hasMany(TypeofJob)
 TypeofJob.belongsTo(Job)
 Job.hasMany(Application)
 Application.belongsTo(Job)
+User.hasMany(Application)
+Application.belongsTo(User)
 
 module.exports = { User, Job, Location, TypeofJob, Skill, Application }

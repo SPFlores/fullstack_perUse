@@ -36,6 +36,7 @@ const SearchPage = _ => {
     axios(config)
       .then(({ data }) => {
         setSearchState({ ...searchState, jobs: data.jobs })
+        console.log(data)
       })
       .catch(e => console.log(e))
 

@@ -4,10 +4,8 @@ module.exports = (sequelize, Sequelize) => {
     title: { type: Sequelize.STRING, allowNull: false, isAlphanumeric: true, len: [2] },
     company: { type: Sequelize.STRING, allowNull: false, isAlphanumeric: true, len: [2] },
     type: { type: Sequelize.STRING, allowNull: false, isAlphanumeric: true, len: [2] },
-    location: { type: Sequelize.STRING, allowNull: false, isAlphanumeric: true, len: [2] },
-    description: { type: Sequelize.TEXT, allowNull: false, isAlphanumeric: true, len: [1] },
-    skills: { type: Sequelize.ARRAY },
-    applicantCount: { type: Sequelize.INTEGER, allowNull: false }
+    // locationAt: { type: Sequelize.STRING, allowNull: false, isAlphanumeric: true, len: [2] },
+    description: { type: Sequelize.TEXT, allowNull: false, isAlphanumeric: true, len: [1] }
   }, {
     sequelize,
     modelName: 'job'

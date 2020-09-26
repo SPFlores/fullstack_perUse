@@ -43,43 +43,22 @@ const LoginPage = _ => {
       })
       sessionStorage.setItem('isLoggedIn', false)
     } else {
-      const user = {
+      axios.get('/login', {
         username: username.current.value,
         password: password.current.value
-      }
-      const config = {
-        method: 'post',
-        url: 'https://divercity-test.herokuapp.com/login',
-        data: user
-      }
-
-      axios(config)
-        .then(({ data }) => {
-          if (data.token) {
-            sessionStorage.setItem('isLoggedIn', true)
-            sessionStorage.setItem('token', data.token)
-            setUserState({ ...userState, token: data.token, isLoggedIn: true })
-          }
+      })
+        .then(({ data: user }) => {
+          console.log(user)
+          // if (user) {
+          //   sessionStorage.setItem('isLoggedIn', true)
+          //   sessionStorage.setItem('name', user.name)
+          //   sessionStorage.setItem('username', user.username)
+          //   setUserState({ ...userState, token: user.token, isLoggedIn: true })
+          // }
         })
-        .catch(e => {
-          console.log(e)
+        .catch(_ => {
           setUserState({ ...userState, isLoggedIn: false })
         })
-
-      // axios.post('/login', {
-      //   username: username.current.value,
-      //   password: password.current.value
-      // })
-      //   .then(({ data }) => {
-      //     if (data.token) {
-      //       sessionStorage.setItem('isLoggedIn', true)
-      //       sessionStorage.setItem('token', data.token)
-      //       setUserState({ ...userState, token: data.token, isLoggedIn: true })
-      //     }
-      //   })
-      //   .catch(_ => {
-      //     setUserState({ ...userState, isLoggedIn: false })
-      //   })
     }
   }
 

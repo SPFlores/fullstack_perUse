@@ -8,22 +8,25 @@ module.exports = app => {
       .catch(e => console.log(e))
   })
 
+  app.get('/users/:username', (req, res) => {
+    User.findAll({ where: { username: req.params.username } })
+      .then(users => res.json(users))
+      .catch(e => console.log(e))
+  })
+
   app.get('./users/:id', (req, res) => {
     User.findOne({ where: { id: req.params.id } })
       .then(user => res.json(user))
       .catch(e => console.log(e))
   })
 
-  app.get('/login', (req, res) => {
-    User.findOne({
-      where: req.body
+  app.get('/login/:username/:password', (req, res) => {
+    User.findAll({
+      where: [{ username: req.params.username }, { password: req.params.password }]
     })
       .then(user => {
-        if (user) {
-          res.json(user)
-          res.sendStatus(200)
-        } else {
-        }
+        res.json(user)
+        res.sendStatus(200)
       })
       .catch(e => console.log(e))
   })

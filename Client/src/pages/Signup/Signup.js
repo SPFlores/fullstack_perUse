@@ -17,7 +17,8 @@ const SignupPage = _ => {
     failedSignupPassword: false,
     failedConfirmPassword: false,
     failedChooseType: false,
-    userType: ''
+    userType: '',
+    usernameError: false
   })
 
   newUserState.renderRedirect = _ => {
@@ -32,7 +33,6 @@ const SignupPage = _ => {
 
   newUserState.handleSignUpUser = e => {
     e.preventDefault()
-    console.log(newUserState.userType)
     if (name.current.value === '' && username.current.value === '' && password.current.value === '') {
       setNewUserState({
         ...newUserState,
@@ -95,35 +95,35 @@ const SignupPage = _ => {
       })
       sessionStorage.setItem('isLoggedIn', false)
     } else {
-      const user = {
-        username: username.current.value,
-        password: password.current.value,
-        name: name.current.value
-      }
-
-      axios.post('/register', {
-        name: name.current.value,
-        username: username.current.value,
-        password: password.current.value,
-        role: newUserState.userType
-      })
-        .then(({ data: user }) => {
-          axios.get('/login', {
-            username: username.current.value,
-            password: password.current.value
-          })
-            .then(({ data: user }) => {
-              sessionStorage.setItem('isLoggedIn', true)
-              sessionStorage.setItem('name', user.name)
-              sessionStorage.setItem('username', user.username)
-              setNewUserState({ ...newUserState, isLoggedIn: true })
+      axios.get(`/users/${username.current.value}`)
+        .then(({ data: users }) => {
+          if (users.length > 1) {
+            setNewUserState({ ...newUserState, usernameError: true })
+          } else {
+            axios.post('/register', {
+              name: name.current.value,
+              username: username.current.value,
+              password: password.current.value,
+              role: newUserState.userType
             })
-            .catch(e => console.log(e))
+              .then(({ data: user }) => {
+
+                axios.get(`/login/${username.current.value}/${password.current.value}`)
+                  .then(({ data: user }) => {
+                    sessionStorage.setItem('isLoggedIn', true)
+                    sessionStorage.setItem('name', user.name)
+                    sessionStorage.setItem('username', user.username)
+                    setNewUserState({ ...newUserState, isLoggedIn: true })
+                  })
+                  .catch(e => console.log(e))
+              })
+              .catch(e => {
+                alert('Unable to register!')
+                console.log(e)
+              })
+          }
         })
-        .catch(e => {
-          alert('Unable to register!')
-          console.log(e)
-        })
+        .catch(e => console.log(e))
     }
   }
 
@@ -144,6 +144,7 @@ const SignupPage = _ => {
           <input type='text' name='name' ref={name} id='nameEntry' />
         </div>
         <div>
+          {newUserState.usernameError ? <p style={{ color: '#ef6461' }}>Sorry, that username is already taken. Please choose another and try again.</p> : null}
           {newUserState.failedSignupUsername ? <p style={{ color: '#ef6461' }}>Please enter your username!</p> : null}
           <label htmlFor='username'>Username: </label>
           <input type='text' id='username' name='username' ref={username} className='usernameEntry' />

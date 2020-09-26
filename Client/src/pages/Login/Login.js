@@ -10,11 +10,12 @@ const LoginPage = _ => {
     isLoggedIn: false,
     failedLoginUsername: false,
     failedLoginPassword: false,
-    token: ''
+    token: '',
+    logginError: false
   })
 
   userState.renderRedirect = _ => {
-    if (userState.token.length > 0) {
+    if (userState.isLoggedIn) {
       return <Redirect to='/' />
     }
   }
@@ -43,20 +44,19 @@ const LoginPage = _ => {
       })
       sessionStorage.setItem('isLoggedIn', false)
     } else {
-      axios.get('/login', {
-        username: username.current.value,
-        password: password.current.value
-      })
+      axios.get(`/login/${username.current.value}/${password.current.value}`)
         .then(({ data: user }) => {
-          console.log(user)
-          // if (user) {
-          //   sessionStorage.setItem('isLoggedIn', true)
-          //   sessionStorage.setItem('name', user.name)
-          //   sessionStorage.setItem('username', user.username)
-          //   setUserState({ ...userState, token: user.token, isLoggedIn: true })
-          // }
+          if (user[0]) {
+            setUserState({ ...userState, isLoggedIn: true })
+            console.log(user[0])
+            sessionStorage.setItem('isLoggedIn', true)
+            sessionStorage.setItem('name', user[0].name)
+            sessionStorage.setItem('username', user[0].username)
+          } else {
+            setUserState({ ...userState, logginError: true, failedLoginPassword: false, failedLoginUsername: false })
+          }
         })
-        .catch(_ => {
+        .catch(e => {
           setUserState({ ...userState, isLoggedIn: false })
         })
     }
@@ -72,6 +72,10 @@ const LoginPage = _ => {
 
       <form>
         <h5>Login To Your Account</h5>
+        <div>
+          {userState.logginError ? <p style={{ color: '#ef6461' }}>Oops! Please check your username and password to make sure they are correct. If you don't have an account you can sign up using the button at the bottom of the page!</p> : null}
+
+        </div>
         <div>
           {userState.failedLoginUsername ? <p style={{ color: '#ef6461' }}>Please enter your username!</p> : null}
           <label htmlFor='username'>Username: </label>

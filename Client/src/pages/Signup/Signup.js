@@ -120,6 +120,7 @@ const SignupPage = _ => {
               .catch(e => {
                 alert('Unable to register!')
                 console.log(e)
+                setNewUserState({ ...newUserState, isLoggedIn: false })
               })
           }
         })

@@ -7,6 +7,7 @@ const SignupPage = _ => {
   const username = useRef()
   const password = useRef()
   const passwordConf = useRef()
+  const userType = useRef()
 
   const [newUserState, setNewUserState] = useState({
     isLoggedIn: false,
@@ -14,7 +15,9 @@ const SignupPage = _ => {
     failedSignupName: false,
     failedSignupUsername: false,
     failedSignupPassword: false,
-    failedConfirmPassword: false
+    failedConfirmPassword: false,
+    failedChooseType: false,
+    userType: ''
   })
 
   newUserState.renderRedirect = _ => {
@@ -23,8 +26,13 @@ const SignupPage = _ => {
     }
   }
 
+  newUserState.handleRadioButton = e => {
+    setNewUserState({ ...newUserState, userType: e.target.value })
+  }
+
   newUserState.handleSignUpUser = e => {
     e.preventDefault()
+    console.log(newUserState.userType)
     if (name.current.value === '' && username.current.value === '' && password.current.value === '') {
       setNewUserState({
         ...newUserState,
@@ -38,7 +46,8 @@ const SignupPage = _ => {
         failedSignupName: true,
         failedSignupUsername: false,
         failedSignupPassword: false,
-        failedConfirmPassword: false
+        failedConfirmPassword: false,
+        failedChooseType: false
       })
       sessionStorage.setItem('isLoggedIn', false)
     } else if (username.current.value === '') {
@@ -48,7 +57,8 @@ const SignupPage = _ => {
         failedSigupName: false,
         failedSignupUsername: true,
         failedSignupPassword: false,
-        failedConfirmPassword: false
+        failedConfirmPassword: false,
+        failedChooseType: false
       })
       sessionStorage.setItem('isLoggedIn', false)
     } else if (password.current.value === '') {
@@ -58,7 +68,8 @@ const SignupPage = _ => {
         failedSignupnName: false,
         failedSignupUsername: false,
         failedSignupPassword: true,
-        failedConfirmPassword: false
+        failedConfirmPassword: false,
+        failedChooseType: false
       })
       sessionStorage.setItem('isLoggedIn', false)
     } else if (password.current.value !== passwordConf.current.value) {
@@ -68,7 +79,19 @@ const SignupPage = _ => {
         failedSignupnName: false,
         failedSignupUsername: false,
         failedSignupPassword: false,
-        failedConfirmPassword: true
+        failedConfirmPassword: true,
+        failedChooseType: false
+      })
+      sessionStorage.setItem('isLoggedIn', false)
+    } else if (newUserState.userType === '') {
+      setNewUserState({
+        ...newUserState,
+        failedAll: false,
+        failedSignupnName: false,
+        failedSignupUsername: false,
+        failedSignupPassword: false,
+        failedConfirmPassword: false,
+        failedChooseType: true
       })
       sessionStorage.setItem('isLoggedIn', false)
     } else {
@@ -77,28 +100,22 @@ const SignupPage = _ => {
         password: password.current.value,
         name: name.current.value
       }
-      const config = {
-        method: 'post',
-        url: 'https://divercity-test.herokuapp.com/register',
-        data: user
-      }
 
-      axios(config)
-        .then(({ data }) => {
-          const user = {
+      axios.post('/register', {
+        name: name.current.value,
+        username: username.current.value,
+        password: password.current.value,
+        role: newUserState.userType
+      })
+        .then(({ data: user }) => {
+          axios.get('/login', {
             username: username.current.value,
             password: password.current.value
-          }
-          const config = {
-            method: 'post',
-            url: 'https://divercity-test.herokuapp.com/login',
-            data: user
-          }
-
-          axios(config)
-            .then(({ data }) => {
+          })
+            .then(({ data: user }) => {
               sessionStorage.setItem('isLoggedIn', true)
-              sessionStorage.setItem('token', data.token)
+              sessionStorage.setItem('name', user.name)
+              sessionStorage.setItem('username', user.username)
               setNewUserState({ ...newUserState, isLoggedIn: true })
             })
             .catch(e => console.log(e))
@@ -107,28 +124,6 @@ const SignupPage = _ => {
           alert('Unable to register!')
           console.log(e)
         })
-
-      // axios.post('/register', {
-      //   username: username.current.value,
-      //   password: password.current.value,
-      //   name: name.current.value
-      // })
-      //   .then(_ => {
-      //     axios.post('/login', {
-      //       username: username.current.value,
-      //       password: password.current.value
-      //     })
-      //       .then(({ data }) => {
-      //         sessionStorage.setItem('isLoggedIn', true)
-      //         sessionStorage.setItem('token', data.token)
-      //         setNewUserState({ ...newUserState, isLoggedIn: true })
-      //       })
-      //       .catch(e => console.log(e))
-      //   })
-      //   .catch(e => {
-      //     alert('Unable to register!')
-      //     console.log(e)
-      //   })
     }
   }
 
@@ -162,6 +157,18 @@ const SignupPage = _ => {
           {newUserState.failedConfirmPassword ? <p style={{ color: 'red' }}>Your passwords do not match!</p> : null}
           <label htmlFor='passwordConf'>Password: </label>
           <input type='password' id='passwordConf' name='passwordConf' ref={passwordConf} className='passwordEntry' />
+        </div>
+        <div>
+          {newUserState.failedChooseType ? <p style={{ color: 'red' }}>Please choose a user type!</p> : null}
+          <label htmlFor='userType'>User type: </label>
+          <label>
+            <input type='radio' id='jobSeeker' name='userType' value='jobSeeker' className='userType' checked={newUserState.userType === 'jobSeeker'} onChange={newUserState.handleRadioButton} />
+            Job Seeker
+          </label>
+          <label>
+            <input type='radio' id='jobPoster' name='userType' value='jobPoster' className='userType' checked={newUserState.userType === 'jobPoster'} onChange={newUserState.handleRadioButton} />
+            Job Poster
+          </label>
         </div>
         <button onClick={newUserState.handleSignUpUser} className='signupBtn'>Submit</button>
       </form>

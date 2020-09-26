@@ -50,10 +50,10 @@ const ApplyPage = _ => {
         const config = {
           method: 'post',
           url: `https://divercity-test.herokuapp.com/jobs/${jobID}/apply`,
-          headers: {
-            'Authorization': token,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
+          // headers: {
+            // 'Authorization': token,
+            // 'Content-Type': 'application/x-www-form-urlencoded'
+          // },
           data: application
         }
 

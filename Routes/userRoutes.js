@@ -16,17 +16,13 @@ module.exports = app => {
 
   app.get('/login', (req, res) => {
     User.findOne({
-      where: {
-        [Op.and]: [{ email: req.body.email }, { password: req.body.password }]
-      }
+      where: req.body
     })
       .then(user => {
         if (user) {
-          console.log('login success')
-          // will set localstorage boolean isLoggedIn OR will set token in localstorage once user auth is implemented down the line
+          res.json(user)
           res.sendStatus(200)
         } else {
-          console.log('login failed')
         }
       })
       .catch(e => console.log(e))
@@ -34,7 +30,8 @@ module.exports = app => {
 
   app.post('/register', (req, res) => {
     User.create(req.body)
-      .then(_ => {
+      .then(user => {
+        res.json(user)
         res.sendStatus(200)
       })
       .catch(e => console.log(e))

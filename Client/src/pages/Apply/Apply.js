@@ -17,7 +17,7 @@ const ApplyPage = _ => {
 
   applicationState.handleApply = e => {
     e.preventDefault()
-    if (sessionStorage.getItem('isLoggedIn') === 'true' && sessionStorage.getItem('token').length > 0) {
+    if (sessionStorage.getItem('isLoggedIn') === 'true') {
       setApplicationState({ ...applicationState, isLoggedIn: true })
       if (motivation.current.value === '' && coverLetter.current.value === '') {
         setApplicationState({
@@ -46,13 +46,12 @@ const ApplyPage = _ => {
           'cover_letter': coverLetter.current.value
         })
         const jobID = sessionStorage.getItem('jobID')
-        const token = sessionStorage.getItem('token')
         const config = {
           method: 'post',
           url: `https://divercity-test.herokuapp.com/jobs/${jobID}/apply`,
           // headers: {
-            // 'Authorization': token,
-            // 'Content-Type': 'application/x-www-form-urlencoded'
+          // 'Authorization': token,
+          // 'Content-Type': 'application/x-www-form-urlencoded'
           // },
           data: application
         }

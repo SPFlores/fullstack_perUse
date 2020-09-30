@@ -113,6 +113,7 @@ const SignupPage = _ => {
                     sessionStorage.setItem('isLoggedIn', true)
                     sessionStorage.setItem('name', user.name)
                     sessionStorage.setItem('username', user.username)
+                    sessionStorage.setItem('usertype', user.role)
                     setNewUserState({ ...newUserState, isLoggedIn: true })
                   })
                   .catch(e => console.log(e))

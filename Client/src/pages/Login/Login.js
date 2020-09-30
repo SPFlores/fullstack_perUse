@@ -10,7 +10,6 @@ const LoginPage = _ => {
     isLoggedIn: false,
     failedLoginUsername: false,
     failedLoginPassword: false,
-    token: '',
     logginError: false
   })
 
@@ -52,6 +51,7 @@ const LoginPage = _ => {
             sessionStorage.setItem('isLoggedIn', true)
             sessionStorage.setItem('name', user[0].name)
             sessionStorage.setItem('username', user[0].username)
+            sessionStorage.setItem('usertype', user[0].role)
           } else {
             setUserState({ ...userState, logginError: true, failedLoginPassword: false, failedLoginUsername: false })
           }

@@ -28,23 +28,12 @@ const SearchPage = _ => {
   }, [searchState.jobs])
 
   searchState.handleSearchAll = e => {
-    const config = {
-      method: 'get',
-      url: 'https://divercity-test.herokuapp.com/jobs'
-    }
-
-    axios(config)
-      .then(({ data }) => {
-        setSearchState({ ...searchState, jobs: data.jobs })
-        console.log(data)
+    axios.get('/jobs')
+      .then(({ data: jobs }) => {
+        setSearchState({ ...searchState, jobs })
+        console.log(jobs[0].typeofjobs)
       })
       .catch(e => console.log(e))
-
-    // axios.get('/jobs')
-    //   .then(({ data }) => {
-    //     setSearchState({ ...searchState, jobs: data.jobs })
-    //   })
-    //   .catch(e => console.log(e))
   }
 
   searchState.locationFilter = _ => {
@@ -233,12 +222,11 @@ const SearchPage = _ => {
       <div key={job.id} className='jobCard'>
         <h3 className='jobCardTitle'>Title: {job.title}</h3>
         <h5 className='jobH'>Company: {job.company}</h5>
-        <h5 className='jobH'>Type: {job.job_type}</h5>
-        <h5 className='jobH'>Location: {job.location}</h5>
-        {/* It is acknowledged that the below is not best practice when importing data from outside APIs for consumption. However, it does allow for the most flexibility in terms of consuming this particular API and is limited in scope to this small project. An alternative would be to import the description and .replace() all tags with apces, however this does not allow for flexibility in formatting of description. */}
-        <div dangerouslySetInnerHTML={{ __html: job.description }} />
-        <p><strong>Skills:</strong> {job.skills_tag.join(', ')}</p>
-        <p><strong>Applicant count:</strong> {job.applicant_count}</p>
+        <h5 className='jobH'>Type: {job.typeofjobs[0].typeofjob}</h5>
+        <h5 className='jobH'>Location: {job.location.location}</h5>
+        <p className='jobDescription'>{job.description }</p>
+        {/* <p><strong>Skills:</strong> {job.skills_tag.join(', ')}</p> */}
+        {/* <p><strong>Applicant count:</strong> {job.applicant_count}</p> */}
         {searchState.ableToApply
           ? <button id={job.id} data-title={job.title} onClick={searchState.handleApply} className='applyBtn'>Apply</button>
           : <div>

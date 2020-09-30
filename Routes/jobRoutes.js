@@ -1,8 +1,8 @@
-const { Job, Skill, TypeofJob } = require('../models')
+const { Job, Skill, TypeofJob, Location } = require('../models')
 
 module.exports = app => {
   app.get('/jobs', (req, res) => {
-    Job.findAll({ include: [TypeofJob, Skill] })
+    Job.findAll({ include: [TypeofJob, Skill, Location] })
       .then(jobs => res.json(jobs))
       .catch(e => console.log(e))
   })
@@ -13,7 +13,7 @@ module.exports = app => {
       .catch(e => console.log(e))
   })
 
-  // must be logged in and be job poster, will validate using localstorage isLoggedIn boolean OR token if some type of auth is implemented down the line and some type of userType localStorage item
+  // must be logged in and be job poster, will validate using localstorage isLoggedIn boolean and some type of userType localStorage item OR token if some type of auth is implemented down the line
   app.post('/jobs', (req, res) => {
     Job.create(req.body)
       .then(_ => {

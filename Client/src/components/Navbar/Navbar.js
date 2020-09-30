@@ -16,8 +16,10 @@ const Navbar = _ => {
 
   navbarState.handleLogout = e => {
     setNavbarState({ ...navbarState, isLoggedIn: false })
-    sessionStorage.setItem('isLoggedIn', 'false')
-    sessionStorage.setItem('token', '')
+    sessionStorage.setItem('isLoggedIn', false)
+    sessionStorage.setItem('name', '')
+    sessionStorage.setItem('username', '')
+    sessionStorage.setItem('usertype', '')
   }
 
   return (

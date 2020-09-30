@@ -3,4 +3,5 @@ module.exports = app => {
   require('./jobRoutes.js')(app)
   require('./userRoutes.js')(app)
   require('./locationRoutes.js')(app)
+  require('./typeRoutes.js')(app)
 }

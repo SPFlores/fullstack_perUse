@@ -4,4 +4,5 @@ module.exports = app => {
   require('./userRoutes.js')(app)
   require('./locationRoutes.js')(app)
   require('./typeRoutes.js')(app)
+  require('./skillsRoutes.js')(app)
 }

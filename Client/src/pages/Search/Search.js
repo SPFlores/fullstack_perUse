@@ -65,17 +65,17 @@ const SearchPage = _ => {
   }
 
   searchState.skillsFilter = _ => {
-    // axios.get('/skills')
-    //   .then(({ data: skills }) => {
-    //     setSearchState({
-    //       ...searchState,
-    //       location: false,
-    //       type: false,
-    //       skills_tags: skills,
-    //       skills: true
-    //     })
-    //   })
-    //   .catch(e => console.log(e))
+    axios.get('/skills')
+      .then(({ data: skills }) => {
+        setSearchState({
+          ...searchState,
+          location: false,
+          type: false,
+          skills_tags: skills,
+          skills: true
+        })
+      })
+      .catch(e => console.log(e))
   }
 
   searchState.filterJobs = ({ target }) => {
@@ -113,7 +113,8 @@ const SearchPage = _ => {
 
   searchState.getSkillOptions = _ => {
     const listItems = searchState.skills_tags.map(skill =>
-      <button className='skills' id={skill} onClick={searchState.filterJobs} key={searchState.skills_tags.indexOf(skill)}>{skill}</button>
+      // console.log('a')
+      <button className='skills' id={skill} onClick={searchState.filterJobs} key={searchState.skills_tags.indexOf(skill)}>{skill.skill}</button>
     )
     return <ul>{listItems}</ul>
   }

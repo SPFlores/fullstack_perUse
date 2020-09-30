@@ -37,16 +37,10 @@ const SearchPage = _ => {
   }
 
   searchState.locationFilter = _ => {
-    const config = {
-      method: 'get',
-      url: 'https://divercity-test.herokuapp.com/jobs'
-    }
-
-    axios(config)
-      .then(({ data }) => {
-        const locationsArr = data.jobs.map(job => job.location)
-        const realLocations = locationsArr.filter(loc => typeof loc !== 'undefined')
-        const locationOptions = new Set(realLocations)
+    axios.get('/locations')
+      .then(({ data: locations }) => {
+        const locationsArr = locations.map(location => location.location)
+        const locationOptions = new Set(locationsArr)
         setSearchState({
           ...searchState,
           location: true,
@@ -56,44 +50,9 @@ const SearchPage = _ => {
         })
       })
       .catch(e => console.log(e))
-
-    // axios.get('/jobs')
-    //   .then(({ data }) => {
-    //     const locationsArr = data.jobs.map(job => job.location)
-    //     const realLocations = locationsArr.filter(loc => typeof loc !== 'undefined')
-    //     const locationOptions = new Set(realLocations)
-    //     setSearchState({
-    //       ...searchState,
-    //       location: true,
-    //       locations: [...locationOptions],
-    //       type: false,
-    //       skills: false
-    //     })
-    //   })
-    //   .catch(e => console.log(e))
   }
 
   searchState.typeFilter = _ => {
-    const config = {
-      method: 'get',
-      url: 'https://divercity-test.herokuapp.com/jobs'
-    }
-
-    axios(config)
-      .then(({ data }) => {
-        const typeArr = data.jobs.map(job => job.job_type)
-        const realTypes = typeArr.filter(type => typeof type !== 'undefined')
-        const typeOptions = new Set(realTypes)
-        setSearchState({
-          ...searchState,
-          location: false,
-          type: true,
-          types: [...typeOptions],
-          skills: false
-        })
-      })
-      .catch(e => console.log(e))
-
     // axios.get('/jobs')
     //   .then(({ data }) => {
     //     const typeArr = data.jobs.map(job => job.job_type)
@@ -224,7 +183,7 @@ const SearchPage = _ => {
         <h5 className='jobH'>Company: {job.company}</h5>
         <h5 className='jobH'>Type: {job.typeofjobs[0].typeofjob}</h5>
         <h5 className='jobH'>Location: {job.location.location}</h5>
-        <p className='jobDescription'>{job.description }</p>
+        <p className='jobDescription'>{job.description}</p>
         {/* <p><strong>Skills:</strong> {job.skills_tag.join(', ')}</p> */}
         {/* <p><strong>Applicant count:</strong> {job.applicant_count}</p> */}
         {searchState.ableToApply

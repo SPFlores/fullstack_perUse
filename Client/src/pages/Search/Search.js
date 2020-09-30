@@ -39,12 +39,10 @@ const SearchPage = _ => {
   searchState.locationFilter = _ => {
     axios.get('/locations')
       .then(({ data: locations }) => {
-        const locationsArr = locations.map(location => location.location)
-        const locationOptions = new Set(locationsArr)
         setSearchState({
           ...searchState,
           location: true,
-          locations: [...locationOptions],
+          locations,
           type: false,
           skills: false
         })
@@ -55,13 +53,11 @@ const SearchPage = _ => {
   searchState.typeFilter = _ => {
     axios.get('/types')
       .then(({ data: types }) => {
-        const typeArr = types.map(type => type.typeofjob)
-        const typeOptions = new Set(typeArr)
         setSearchState({
           ...searchState,
           location: false,
           type: true,
-          types: [...typeOptions],
+          types,
           skills: false
         })
       })
@@ -69,17 +65,13 @@ const SearchPage = _ => {
   }
 
   searchState.skillsFilter = _ => {
-    // axios.get('/jobs')
-    //   .then(({ data }) => {
-    //     const skillsRaw = data.jobs.map(job => job.skills_tag)
-    //     const skillsArr = [].concat.apply([], skillsRaw)
-    //     const realSkills = skillsArr.filter(skill => typeof skill !== 'undefined')
-    //     const skillOptions = new Set(realSkills)
+    // axios.get('/skills')
+    //   .then(({ data: skills }) => {
     //     setSearchState({
     //       ...searchState,
     //       location: false,
     //       type: false,
-    //       skills_tags: [...skillOptions],
+    //       skills_tags: skills,
     //       skills: true
     //     })
     //   })
@@ -103,47 +95,18 @@ const SearchPage = _ => {
       default:
         alert('something went wrong')
     }
-
-    // if (filter === 'location') {
-    //   // const validJobs = data.jobs.filter(job => { return job.location === value })
-    //   // setSearchState({ ...searchState, jobs: validJobs })
-    //   console.log(filter)
-    // } else if (filter === 'type') {
-    //   // const validJobs = data.jobs.filter(job => { return job.job_type === value })
-    //   // setSearchState({ ...searchState, jobs: validJobs })
-    //   console.log(filter)
-    // } else if (filter === 'skills') {
-    //   // const validJobs = data.jobs.filter(job => job.skills_tag.includes(value))
-    //   // setSearchState({ ...searchState, jobs: validJobs })
-    //   console.log(filter)
-    // } else alert('Something is not working')
-
-    // axios.get('/jobs')
-    //   .then(({ data }) => {
-    //     if (filter === 'location') {
-    //       const validJobs = data.jobs.filter(job => { return job.location === value })
-    //       setSearchState({ ...searchState, jobs: validJobs })
-    //     } else if (filter === 'type') {
-    //       const validJobs = data.jobs.filter(job => { return job.job_type === value })
-    //       setSearchState({ ...searchState, jobs: validJobs })
-    //     } else if (filter === 'skills') {
-    //       const validJobs = data.jobs.filter(job => job.skills_tag.includes(value))
-    //       setSearchState({ ...searchState, jobs: validJobs })
-    //     } else console.log('not working')
-    //   })
-    //   .catch(e => console.log(e))
   }
 
   searchState.getLocationOptions = _ => {
     const listItems = searchState.locations.map(location =>
-      <button className='location' id={location} key={searchState.locations.indexOf(location)} onClick={searchState.filterJobs}>{location}</button>
+      <button className='location' id={location} key={searchState.locations.indexOf(location)} onClick={searchState.filterJobs}>{location.location}</button>
     )
     return <ul>{listItems}</ul>
   }
 
   searchState.getTypeOptions = _ => {
     const listItems = searchState.types.map(type =>
-      <button className='type' id={type} onClick={searchState.filterJobs} key={searchState.types.indexOf(type)}>{type}</button>
+      <button className='type' id={type.id} onClick={searchState.filterJobs} key={searchState.types.indexOf(type)}>{type.typeofjob}</button>
     )
     return <ul>{listItems}</ul>
   }

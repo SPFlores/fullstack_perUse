@@ -1,7 +1,7 @@
 {
   "name": "perUse",
   "version": "1.0.0",
-  "description": "A ReactJS front end focused application to search an API for jobs, authenticate a user, and allow for applications to jobs.",
+  "description": "A ReactJS full stack application to search an API for jobs, authenticate a user, and allow for applications to jobs.",
   "main": "server.js",
   "dependencies": {
     "axios": "^0.20.0",
@@ -30,6 +30,5 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/SPFlores/perUse/issues"
-  },
-  "homepage": "https://spflores.github.io/perUse"
+  }
 }

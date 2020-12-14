@@ -95,34 +95,26 @@ const SignupPage = _ => {
       })
       sessionStorage.setItem('isLoggedIn', false)
     } else {
-      axios.get(`/users/${username.current.value}`)
-        .then(({ data: users }) => {
-          if (users.length > 1) {
-            setNewUserState({ ...newUserState, usernameError: true })
+      axios.post('/register', {
+        name: name.current.value,
+        username: username.current.value,
+        password: password.current.value,
+        role: newUserState.userType
+      })
+        .then(({ data }) => {
+          if (data.errors) {
+            alert(`${data.errors[0].message}`)
+            setNewUserState({ ...newUserState, isLoggedIn: false })
           } else {
-            axios.post('/register', {
-              name: name.current.value,
-              username: username.current.value,
-              password: password.current.value,
-              role: newUserState.userType
-            })
+            axios.get(`/login/${username.current.value}/${password.current.value}`)
               .then(({ data: user }) => {
-
-                axios.get(`/login/${username.current.value}/${password.current.value}`)
-                  .then(({ data: user }) => {
-                    sessionStorage.setItem('isLoggedIn', true)
-                    sessionStorage.setItem('name', user.name)
-                    sessionStorage.setItem('username', user.username)
-                    sessionStorage.setItem('usertype', user.role)
-                    setNewUserState({ ...newUserState, isLoggedIn: true })
-                  })
-                  .catch(e => console.log(e))
+                sessionStorage.setItem('isLoggedIn', true)
+                sessionStorage.setItem('name', user.name)
+                sessionStorage.setItem('username', user.username)
+                sessionStorage.setItem('usertype', user.role)
+                setNewUserState({ ...newUserState, isLoggedIn: true })
               })
-              .catch(e => {
-                alert('Unable to register!')
-                console.log(e)
-                setNewUserState({ ...newUserState, isLoggedIn: false })
-              })
+              .catch(e => console.log(e))
           }
         })
         .catch(e => console.log(e))

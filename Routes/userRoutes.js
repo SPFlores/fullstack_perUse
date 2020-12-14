@@ -8,12 +8,6 @@ module.exports = app => {
       .catch(e => console.log(e))
   })
 
-  app.get('/users/:username', (req, res) => {
-    User.findAll({ where: { username: req.params.username } })
-      .then(users => res.json(users))
-      .catch(e => console.log(e))
-  })
-
   app.get('./users/:id', (req, res) => {
     User.findOne({ where: { id: req.params.id } })
       .then(user => res.json(user))
@@ -37,7 +31,9 @@ module.exports = app => {
         res.json(user)
         res.sendStatus(200)
       })
-      .catch(e => console.log(e))
+      .catch(e => {
+        res.json(e)
+      })
   })
 
   app.put('/users', (req, res) => {

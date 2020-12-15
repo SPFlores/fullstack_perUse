@@ -161,13 +161,16 @@ const SearchPage = _ => {
       <button id='skillsButton' onClick={searchState.skillsFilter} className='filterBtn'>Skills</button>
 
       <br />
-      <br />
 
       {searchState.location ? searchState.getLocationOptions() : searchState.type ? searchState.getTypeOptions() : searchState.skills ? searchState.getSkillOptions() : null}
 
       {searchState.renderCount > 0 ? searchState.renderCards() : null}
-      {searchState.noResults ? <div>No results</div> : null}
-    </div>
+      {searchState.noResults
+        ? <ul><div className='jobCard'>
+          <h3 className='jobCardTitle'>It seems as if no jobs match your query. Please try a different search.</h3>
+        </div></ul> : null
+      }
+    </div >
   )
 }
 

@@ -80,17 +80,27 @@ const SearchPage = _ => {
 
   searchState.filterJobs = ({ target }) => {
     const value = target.id
-    const filter = searchState.location ? 'location' : searchState.type ? 'type' : 'skills'
-
-    if (filter === 'skills') {
-      return
-    } else {
-      axios.get(`/jobs/${filter}/${value}`)
-        .then(({ data: jobs }) => {
-          jobs.length === 0 ? setSearchState({ ...searchState, noResults: true, jobs }) : setSearchState({ ...searchState, jobs, noResults: false })
-        })
-        .catch(e => console.log(e))
-    }
+    const filter = searchState.location ? 'location' : searchState.type ? 'type' : 'skill'
+    axios.get(`/jobs/${filter}/${value}`)
+      .then(({ data: jobs }) => {
+        jobs.length === 0 ? setSearchState({ ...searchState, noResults: true, jobs })
+          : filter === 'skill'
+            ? jobs.forEach(job => {
+              axios.get(`/jobs/${job.id}`)
+                .then(({ data }) => {
+                  let jobSkills = job.skills.map(item => item.id)
+                  let dataSkills = data.skills.map(item => item.id)
+                  if (dataSkills.length > jobSkills.length) {
+                    for (let i = 0; i < dataSkills.length; i++) {
+                      jobSkills.indexOf(dataSkills[i]) === -1 && jobs[jobs.indexOf(job)].skills.splice(i, 0, data.skills[i])
+                    }
+                  }
+                  setSearchState({ ...searchState, jobs, noResults: false })
+                })
+                .catch(e => console.log(e))
+            }) : setSearchState({ ...searchState, jobs, noResults: false })
+      })
+      .catch(e => console.log(e))
   }
 
   searchState.getLocationOptions = _ => {
@@ -109,7 +119,7 @@ const SearchPage = _ => {
 
   searchState.getSkillOptions = _ => {
     const listItems = searchState.skills_tags.map(skill =>
-      <button className='skills' id={skill} onClick={searchState.filterJobs} key={searchState.skills_tags.indexOf(skill)}>{skill.skill}</button>
+      <button className='skills' id={skill.id} onClick={searchState.filterJobs} key={searchState.skills_tags.indexOf(skill)} > {skill.skill}</button >
     )
     return <ul>{listItems}</ul>
   }
@@ -129,7 +139,7 @@ const SearchPage = _ => {
         <h5 className='jobH'>Type: {job.typeofjob.typeofjob}</h5>
         <h5 className='jobH' > Location: {job.location.location}</h5 >
         <p className='jobDescription'>{job.description}</p>
-        {/* <p><strong>Skills:</strong> {job.skills_tag.join(', ')}</p> */}
+        <p><strong>Skills:</strong> {job.skills.length > 0 ? job.skills.map(skill => skill.skill).join(', ') : 'no skills provided'}</p>
         {/* <p><strong>Applicant count:</strong> {job.applicant_count}</p> */}
         {
           searchState.ableToApply
@@ -150,8 +160,8 @@ const SearchPage = _ => {
 
   return (
     <div className='mainArea'>
-      <h4>Welcome to our search page!</h4>
-      <p>Here you can view all jobs available or sort by location, type, of skills needed. We make it easy to filter for the job right for you--once chosen filter is selected, you will be presented with options for your search, no typing or guessing at keywords necessary.</p>
+      <h4>Welcome to the search page!</h4>
+      <p>Here you can view all jobs available or sort by location, type, or skills needed. We make it easy to filter for the job right for you--once your chosen filter is selected, you will be presented with options for your search, no typing or guessing at keywords necessary.</p>
       <br />
       <button id='searchAll' onClick={searchState.handleSearchAll} className='allJobs blockButton'>Display All Jobs</button>
       <br />

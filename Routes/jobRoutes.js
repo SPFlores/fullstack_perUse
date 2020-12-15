@@ -1,26 +1,36 @@
 const { Job, Skill, TypeofJob, Location } = require('../models')
+const skill = { model: Skill, as: 'skills' }
 
 module.exports = app => {
   app.get('/jobs', (req, res) => {
-    Job.findAll({ include: [TypeofJob, Skill, Location] })
+    Job.findAll({ include: [TypeofJob, skill, Location] })
       .then(jobs => res.json(jobs))
       .catch(e => console.log(e))
   })
 
-  app.get('./jobs/:id', (req, res) => {
-    Job.findOne({ where: { id: req.params.id } })
+  app.get('/jobs/:id', (req, res) => {
+    Job.findOne({ where: { id: req.params.id }, include: [skill] })
       .then(job => res.json(job))
       .catch(e => console.log(e))
   })
 
   app.get('/jobs/location/:id', (req, res) => {
-    Job.findAll({ where: { locationId: req.params.id }, include: [TypeofJob, Skill, Location] })
+    Job.findAll({ where: { locationId: req.params.id }, include: [TypeofJob, skill, Location] })
       .then(jobs => res.json(jobs))
       .catch(e => console.log(e))
   })
 
   app.get('/jobs/type/:id', (req, res) => {
-    Job.findAll({ where: { typeofjobId: req.params.id }, include: [TypeofJob, Skill, Location] })
+    Job.findAll({ where: { typeofjobId: req.params.id }, include: [TypeofJob, skill, Location] })
+      .then(jobs => res.json(jobs))
+      .catch(e => console.log(e))
+  })
+
+  app.get('/jobs/skill/:id', (req, res) => {
+    Job.findAll({
+      include: [TypeofJob, skill, Location],
+      where: { '$skills.id$': req.params.id },
+    })
       .then(jobs => res.json(jobs))
       .catch(e => console.log(e))
   })

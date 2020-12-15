@@ -1,5 +1,4 @@
 const { User } = require('../models')
-const Op = require('sequelize')
 
 module.exports = app => {
   app.get('/users', (req, res) => {
@@ -8,7 +7,7 @@ module.exports = app => {
       .catch(e => console.log(e))
   })
 
-  app.get('./users/:id', (req, res) => {
+  app.get('/users/:id', (req, res) => {
     User.findOne({ where: { id: req.params.id } })
       .then(user => res.json(user))
       .catch(e => console.log(e))

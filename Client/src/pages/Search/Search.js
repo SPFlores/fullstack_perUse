@@ -7,6 +7,7 @@ const SearchPage = _ => {
     jobs: [],
     location: false,
     locations: [],
+    noResults: false,
     skills: false,
     skills_tags: [],
     type: false,
@@ -30,8 +31,7 @@ const SearchPage = _ => {
   searchState.handleSearchAll = e => {
     axios.get('/jobs')
       .then(({ data: jobs }) => {
-        setSearchState({ ...searchState, jobs })
-        console.log(jobs[0].typeofjobs)
+        jobs.length === 0 ? setSearchState({ ...searchState, noResults: true, jobs }) : setSearchState({ ...searchState, jobs, noResults: false })
       })
       .catch(e => console.log(e))
   }
@@ -82,38 +82,33 @@ const SearchPage = _ => {
     const value = target.id
     const filter = searchState.location ? 'location' : searchState.type ? 'type' : 'skills'
 
-    switch (filter) {
-      case 'location':
-        console.log('location')
-        break
-      case 'type':
-        console.log('type')
-        break
-      case 'skills':
-        console.log('skills')
-        break
-      default:
-        alert('something went wrong')
+    if (filter === 'skills') {
+      return
+    } else {
+      axios.get(`/jobs/${filter}/${value}`)
+        .then(({ data: jobs }) => {
+          jobs.length === 0 ? setSearchState({ ...searchState, noResults: true, jobs }) : setSearchState({ ...searchState, jobs, noResults: false })
+        })
+        .catch(e => console.log(e))
     }
   }
 
   searchState.getLocationOptions = _ => {
     const listItems = searchState.locations.map(location =>
-      <button className='location' id={location} key={searchState.locations.indexOf(location)} onClick={searchState.filterJobs}>{location.location}</button>
+      <button className='location' id={location.id} key={searchState.locations.indexOf(location)} onClick={searchState.filterJobs}>{location.location}</button>
     )
     return <ul>{listItems}</ul>
   }
 
   searchState.getTypeOptions = _ => {
     const listItems = searchState.types.map(type =>
-      <button className='type' id={type.id} onClick={searchState.filterJobs} key={searchState.types.indexOf(type)}>{type.typeofjob}</button>
+      <button className='type' id={type.id} key={searchState.types.indexOf(type)} onClick={searchState.filterJobs}>{type.typeofjob}</button>
     )
     return <ul>{listItems}</ul>
   }
 
   searchState.getSkillOptions = _ => {
     const listItems = searchState.skills_tags.map(skill =>
-      // console.log('a')
       <button className='skills' id={skill} onClick={searchState.filterJobs} key={searchState.skills_tags.indexOf(skill)}>{skill.skill}</button>
     )
     return <ul>{listItems}</ul>
@@ -128,27 +123,28 @@ const SearchPage = _ => {
 
   searchState.renderCards = _ => {
     const jobCards = searchState.jobs.map(job =>
-      <div key={job.id} className='jobCard'>
+      <div key={job.id} className='jobCard' >
         <h3 className='jobCardTitle'>Title: {job.title}</h3>
         <h5 className='jobH'>Company: {job.company}</h5>
-        <h5 className='jobH'>Type: {job.typeofjobs[0].typeofjob}</h5>
-        <h5 className='jobH'>Location: {job.location.location}</h5>
+        <h5 className='jobH'>Type: {job.typeofjob.typeofjob}</h5>
+        <h5 className='jobH' > Location: {job.location.location}</h5 >
         <p className='jobDescription'>{job.description}</p>
         {/* <p><strong>Skills:</strong> {job.skills_tag.join(', ')}</p> */}
         {/* <p><strong>Applicant count:</strong> {job.applicant_count}</p> */}
-        {searchState.ableToApply
-          ? <button id={job.id} data-title={job.title} onClick={searchState.handleApply} className='applyBtn'>Apply</button>
-          : <div>
-            <p style={{ color: '#ef6461' }}>Please log in/sign up to apply!</p>
-            <Link to='/login'>
-              <button className='notLoggedInBtn'>Login</button>
-            </Link>
-            <Link to='/signup'>
-              <button className='notLoggedInBtn'>Sign Up</button>
-            </Link>
-          </div>
+        {
+          searchState.ableToApply
+            ? <button id={job.id} data-title={job.title} onClick={searchState.handleApply} className='applyBtn'>Apply</button>
+            : <div>
+              <p style={{ color: '#ef6461' }}>Please log in/sign up to apply!</p>
+              <Link to='/login'>
+                <button className='notLoggedInBtn'>Login</button>
+              </Link>
+              <Link to='/signup'>
+                <button className='notLoggedInBtn'>Sign Up</button>
+              </Link>
+            </div>
         }
-      </div>)
+      </div >)
     return <ul>{jobCards}</ul>
   }
 
@@ -170,6 +166,7 @@ const SearchPage = _ => {
       {searchState.location ? searchState.getLocationOptions() : searchState.type ? searchState.getTypeOptions() : searchState.skills ? searchState.getSkillOptions() : null}
 
       {searchState.renderCount > 0 ? searchState.renderCards() : null}
+      {searchState.noResults ? <div>No results</div> : null}
     </div>
   )
 }

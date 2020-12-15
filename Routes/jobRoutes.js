@@ -13,6 +13,18 @@ module.exports = app => {
       .catch(e => console.log(e))
   })
 
+  app.get('/jobs/location/:id', (req, res) => {
+    Job.findAll({ where: { locationId: req.params.id }, include: [TypeofJob, Skill, Location] })
+      .then(jobs => res.json(jobs))
+      .catch(e => console.log(e))
+  })
+
+  app.get('/jobs/type/:id', (req, res) => {
+    Job.findAll({ where: { typeofjobId: req.params.id }, include: [TypeofJob, Skill, Location] })
+      .then(jobs => res.json(jobs))
+      .catch(e => console.log(e))
+  })
+
   // must be logged in and be job poster, will validate using localstorage isLoggedIn boolean and some type of userType localStorage item OR token if some type of auth is implemented down the line
   app.post('/jobs', (req, res) => {
     Job.create(req.body)
